@@ -87,17 +87,24 @@ lsa <- torch::nn_module(
       output_shape=input_shape
     )
 
+    # Build estimator
+    self$estimator = estimator(
+      code_length=code_length,
+      fm_list=c(32, 32, 32, 32),
+      cpd_channels=cpd_channels
+    )
+
   },
   forward = function(x) {
     # Produce representations
     z = self$encoder(x)
 
     # Estimate CPDs with autoregression
-    #z_dist = self.estimator(z)
+    z_dist = self$estimator(z)
 
     # Reconstruct x
     x_r = self$decoder(z)
 
-    list(x_r = x_r, z = z)
+    list(x_r = x_r, z = z, z_dist = z_dist)
   }
 )
